@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "stroma-nostr"
+version = "0.1.0"
+description = "Minimal Nostr wire-format interface for Safebox Acorn"
+authors = ["Tim Bouma <trbouma@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "stroma", from = "src" }]
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.14"
+aiohttp = ">=3.10,<4"
+bech32 = ">=1.2,<2"
+coincurve = ">=20,<22"
+pycryptodome = ">=3.20,<4"
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8,<10"
+pytest-asyncio = ">=0.25,<2"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "strict"
+markers = ["live: tests that require a live relay"]
+addopts = "-m 'not live'"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
