@@ -12,15 +12,16 @@ Acorn currently uses `monstr` from seven source modules for:
 
 - keys and NIP-19 conversion;
 - event construction, signing, tag access, and validation;
-- NIP-04 legacy direct messages;
 - NIP-44 storage and transfer encryption;
 - custom NIP-59 gift wrapping;
 - relay clients, pools, subscriptions, and queries;
 - small formatting utilities.
 
-NIP-04 is deliberately not in Stroma's initial scope. It should remain behind
-a legacy adapter until Acorn decides whether the remaining paths can be
-retired.
+The unused NIP-04 ecash-direct-message paths were removed after confirming that
+Safebox Web, Clear, Grove, Mainstay, and Stroma had no callers. Historical
+`last_dm` relay records remain hidden as legacy system records, but new Acorns
+no longer create or replicate that cursor. Stroma therefore does not need to
+implement NIP-04 for the Acorn migration.
 
 ## Migration sequence
 
