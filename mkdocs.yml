@@ -1,0 +1,58 @@
+site_name: Stroma
+site_description: A minimal Python interface to Nostr as a signed, encrypted, relay-backed wire format.
+site_url: https://trbouma.github.io/stroma/
+repo_url: https://github.com/trbouma/stroma
+repo_name: trbouma/stroma
+
+docs_dir: website
+site_dir: site
+
+theme:
+  name: material
+  language: en
+  logo: assets/images/stroma-logo.png
+  favicon: assets/images/stroma-logo.png
+  features:
+    - navigation.top
+    - navigation.sections
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Use dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Use light mode
+
+nav:
+  - Home: index.md
+  - Understand Stroma:
+      - Nostr as a Wire Format: nostr-wire-format.md
+      - Protocol Surface: protocol-surface.md
+      - Stroma and Acorn: acorn-boundary.md
+  - Use Stroma:
+      - Getting Started: getting-started.md
+      - Project Status: project-status.md
+  - Security: security.md
+
+markdown_extensions:
+  - attr_list
+  - md_in_html
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+
+extra_css:
+  - stylesheets/extra.css
+
+copyright: Stroma is open-source software released under the MIT License.
