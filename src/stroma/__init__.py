@@ -10,6 +10,7 @@ from .errors import (
     StromaError,
 )
 from .events import Event, EventTags
+from .fips import fips_ipv6_address
 from .keys import Keys
 from .nip19 import Entities, UnknownEntity
 from .nip44 import NIP44Encrypt, calc_padded_len, pad, unpad
@@ -24,6 +25,7 @@ __all__ = [
     "Event",
     "EventError",
     "EventTags",
+    "fips_ipv6_address",
     "GiftWrap",
     "GiftWrapError",
     "KeyError",

@@ -16,6 +16,7 @@ records, application schemas, and business rules remain outside Stroma.
 - secp256k1 keypairs and NIP-19 key encoding;
 - NIP-01 event serialization, BIP-340 signing, and validation;
 - NIP-19 profile, event, relay, and address entities;
+- deterministic FIPS IPv6 address derivation from Nostr public keys;
 - NIP-44 version 2 encryption, including its extended length prefix;
 - NIP-59 gift wrapping with an explicit timestamp policy;
 - NIP-40 expiration tags on gift wraps;
@@ -52,6 +53,14 @@ assert event.is_valid()
 
 payload = NIP44Encrypt(alice).encrypt("private", bob.public_key_hex())
 assert NIP44Encrypt(bob).decrypt(payload, alice.public_key_hex()) == "private"
+```
+
+FIPS-compatible IPv6 addresses are derived without network access:
+
+```python
+from stroma import fips_ipv6_address
+
+address = fips_ipv6_address(alice.public_key_bech32())
 ```
 
 ## Project status
