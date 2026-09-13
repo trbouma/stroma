@@ -17,14 +17,18 @@ from .nip44 import NIP44Encrypt, calc_padded_len, pad, unpad
 from .nip59 import GiftWrap
 from .relay import PublishResult, RelayClient, RelayPool
 from .signing import BasicKeySigner, Signer
+from .compat import Client, ClientPool, DeduplicateAcceptor, util_funcs
 
 __all__ = [
     "BasicKeySigner",
+    "Client",
+    "ClientPool",
     "EncryptionError",
     "Entities",
     "Event",
     "EventError",
     "EventTags",
+    "DeduplicateAcceptor",
     "fips_ipv6_address",
     "GiftWrap",
     "GiftWrapError",
@@ -42,6 +46,7 @@ __all__ = [
     "calc_padded_len",
     "pad",
     "unpad",
+    "util_funcs",
 ]
 
 __version__ = "0.1.0"

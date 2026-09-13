@@ -87,6 +87,16 @@ It does not implement feeds, follows, reactions, profiles, wallet state,
 Cashu, records, Blossom, OpenETR, or a relay server. Those capabilities can use
 Stroma without becoming part of Stroma.
 
+## Part of the Mainstay product family
+
+Stroma is the narrow wire-format library beneath Acorn. Safebox and Mainstay
+applications receive it through their tested dependency chain; they remain
+responsible for identity, configuration, storage, commissioning, and service
+operation.
+
+Stroma is pinned and updated as a library dependency. It is not deployed or
+restarted as an independent service.
+
 ## Project status
 
 Stroma is pre-release software. Its first protocol slice passes official

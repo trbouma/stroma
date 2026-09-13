@@ -39,6 +39,12 @@ Until Stroma is published, another local project can use it with:
 pip install -e /Users/trbouma/projects/stroma
 ```
 
+Applications should pin a tested tag or commit rather than use an editable
+checkout in deployment. Update Stroma by changing the consuming application's
+dependency pin and lock file, then run both Stroma's tests and the consuming
+application's compatibility tests. Stroma is a library: it has no independent
+service identity, persistent state, container, or refresh lifecycle.
+
 ## Small example
 
 ```python
@@ -65,10 +71,11 @@ address = fips_ipv6_address(alice.public_key_bech32())
 
 ## Project status
 
-Stroma is pre-release. Safebox Acorn still uses `monstr`; migration will be
-incremental and gated by compatibility tests and Acorn's complete live test
+Stroma is pre-release. Safebox Acorn's source and non-live tests now use
+Stroma instead of `monstr`. Production use remains gated on a tested Stroma
+commit pin, Acorn lock-file regeneration, and Acorn's configured live relay
 suite. See [the component boundary](docs/COMPONENT-BOUNDARY.md) and
-[the Acorn migration plan](docs/ACORN-MIGRATION.md).
+[the Acorn migration note](docs/ACORN-MIGRATION.md).
 
 ## Security
 

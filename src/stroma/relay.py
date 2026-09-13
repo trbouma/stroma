@@ -29,6 +29,14 @@ class RelayClient:
         self.url = url
         self.timeout = timeout
 
+    async def probe(self) -> bool:
+        """Open and close a bounded WebSocket connection."""
+
+        timeout = aiohttp.ClientTimeout(total=self.timeout)
+        async with aiohttp.ClientSession(timeout=timeout) as session:
+            async with session.ws_connect(self.url):
+                return True
+
     async def publish(self, event: Event) -> PublishResult:
         timeout = aiohttp.ClientTimeout(total=self.timeout)
         async with aiohttp.ClientSession(timeout=timeout) as session:

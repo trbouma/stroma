@@ -38,3 +38,11 @@ def test_event_id_is_canonical() -> None:
     )
 
     assert event.serialize() == '[0,"79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798",1,1,[],"hello"]'
+
+
+def test_event_timestamp_retains_acorn_compatibility() -> None:
+    older = Event(content="older", created_at=10)
+    newer = Event(content="newer", created_at=20)
+
+    assert older.created_at.timestamp() == 10.0
+    assert sorted([newer, older]) == [older, newer]

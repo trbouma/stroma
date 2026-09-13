@@ -20,12 +20,15 @@ class GiftWrap:
         jitter_seconds: int = 0,
         gift_wrap_kind: int = Event.KIND_GIFT_WRAP,
         preserve_rumour_kind: bool = True,
+        kind_gift_wrap: int | None = None,
     ) -> None:
         if jitter_seconds < 0:
             raise ValueError("jitter_seconds must not be negative")
         self.signer = signer
         self.jitter_seconds = jitter_seconds
-        self.gift_wrap_kind = gift_wrap_kind
+        self.gift_wrap_kind = (
+            gift_wrap_kind if kind_gift_wrap is None else int(kind_gift_wrap)
+        )
         self.preserve_rumour_kind = preserve_rumour_kind
 
     def _created_at(self) -> int:
@@ -59,10 +62,17 @@ class GiftWrap:
     async def wrap(
         self,
         event: Event,
-        recipient: str | Keys,
+        recipient: str | Keys | None = None,
         *,
+        to_pub_k: str | Keys | None = None,
         expiration: int | None = None,
+        pow: int | None = None,
     ) -> tuple[Event, Keys]:
+        recipient = recipient if recipient is not None else to_pub_k
+        if recipient is None:
+            raise ValueError("Gift-wrap recipient is required")
+        if pow is not None:
+            raise ValueError("Proof-of-work gift wrapping is not supported")
         recipient_hex = recipient.public_key_hex() if isinstance(recipient, Keys) else Keys(pub_k=recipient).public_key_hex()
         rumour = await self._make_rumour(event)
         seal = await self._make_seal(rumour, recipient_hex)

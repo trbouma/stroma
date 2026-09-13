@@ -2,19 +2,24 @@
 
 ## Summary
 
-Migration should be incremental. Stroma is not yet a drop-in dependency, and
-Acorn should continue using `monstr` until each boundary is covered by unit,
-interoperability, and live tests.
+Acorn's runtime imports have migrated from `monstr` to Stroma. The replacement
+keeps Stroma deliberately narrow: relay reads and writes are bounded,
+operation-scoped calls rather than an application-wide background client.
+
+The migration is complete at the source and non-live-test boundary. Deployment
+remains gated on publishing and pinning the tested Stroma revision, regenerating
+Acorn's lock file, and passing Acorn's configured live relay tests.
 
 ## Current Acorn dependency surface
 
-Acorn currently uses `monstr` from seven source modules for:
+Acorn requires Stroma for:
 
 - keys and NIP-19 conversion;
 - event construction, signing, tag access, and validation;
 - NIP-44 storage and transfer encryption;
-- custom NIP-59 gift wrapping;
-- relay clients, pools, subscriptions, and queries;
+- NIP-59 gift wrapping with Acorn's zero-jitter and expiration policy;
+- bounded relay publication, acknowledgement, connectivity probes, and EOSE
+  queries;
 - small formatting utilities.
 
 The unused NIP-04 ecash-direct-message paths were removed after confirming that
@@ -23,18 +28,19 @@ Safebox Web, Clear, Grove, Mainstay, and Stroma had no callers. Historical
 no longer create or replicate that cursor. Stroma therefore does not need to
 implement NIP-04 for the Acorn migration.
 
-## Migration sequence
+## Implemented migration
 
-1. Add Stroma as a development dependency without changing runtime imports.
-2. Run Stroma's official NIP-44 vectors and Acorn interoperability fixtures.
-3. Replace Acorn's custom `ExtendedNIP44Encrypt` with Stroma NIP-44.
-4. Replace the custom gift-wrap implementation with Stroma NIP-59 while
-   preserving Acorn's zero-jitter, rumour-kind, and expiration policies.
-5. Migrate event, tag, signer, key, and NIP-19 imports.
-6. Introduce an Acorn relay adapter and migrate publish/query paths in small
-   groups.
-7. Run all Acorn unit and live relay-suitability tests.
-8. Remove `monstr` only when no compatibility imports remain.
+1. Event, tag, signer, key, NIP-19, NIP-44, and NIP-59 imports now resolve to
+   Stroma.
+2. Acorn's relay-shaped compatibility surface is provided by Stroma and backed
+   by `RelayClient` and `RelayPool`.
+3. Context-managed publication waits for acknowledgement and propagates
+   failures before returning.
+4. Queries and relay connectivity probes have explicit time budgets.
+5. The Monstr dependency and its leaked-task cleanup fixtures have been removed
+   from Acorn source and tests.
+6. Long-lived subscription behavior is not part of the initial Acorn boundary;
+   current wallet, record, and incoming-funds paths use finite relay queries.
 
 ## Required migration gates
 
@@ -46,12 +52,27 @@ implement NIP-04 for the Acorn migration.
 - Event IDs and signatures match independent implementations.
 - Relay clients close without pending tasks or event-loop warnings.
 - Publish acknowledgement and read-after-write behavior remain explicit.
-- The complete Acorn non-live and live suites pass.
+- The complete Acorn non-live suite passes.
+- Configured live relay-suitability and interoperability suites pass before a
+  production dependency pin is advanced.
 
 ## Relay migration caution
 
-Relay behavior is the highest-risk migration surface. Acorn depends on
+Relay behavior remains the highest-risk migration surface. Acorn depends on
 timeouts, EOSE completion, publication acknowledgements, deduplication, and
-clean async shutdown. Stroma initially provides operation-scoped
-`RelayClient` and `RelayPool` APIs; a compatibility adapter should be designed
-from observed Acorn behavior rather than copying the entire historical client.
+clean async shutdown. Stroma's compatibility adapter maps only the observed
+finite Acorn operations onto operation-scoped `RelayClient` and `RelayPool`
+calls. It intentionally does not recreate a general social-client framework.
+
+This boundary matters operationally: constructing an Acorn must not start
+unbounded relay tasks, and leaving an operation's context must not leave
+WebSocket or publish tasks behind.
+
+## Deployment order
+
+1. Commit and publish the tested Stroma revision.
+2. Pin Acorn to that Stroma tag or commit.
+3. Regenerate `poetry.lock` in Acorn.
+4. Run Stroma tests, the complete Acorn non-live suite, and configured live
+   relay tests.
+5. Update and test each consuming application's Acorn pin.

@@ -41,8 +41,28 @@ class BasicKeySigner(Signer):
     async def sign_event(self, event: Event) -> None:
         event.sign(self.keys)
 
-    async def nip44_encrypt(self, plaintext: str, public_key: str) -> str:
-        return self.nip44.encrypt(plaintext, public_key)
+    async def nip44_encrypt(
+        self,
+        plaintext: str | None = None,
+        public_key: str | None = None,
+        *,
+        plain_text: str | None = None,
+        to_pub_k: str | None = None,
+    ) -> str:
+        message = plaintext if plaintext is not None else plain_text
+        recipient = public_key if public_key is not None else to_pub_k
+        if message is None or recipient is None:
+            raise ValueError("NIP-44 plaintext and recipient are required")
+        return self.nip44.encrypt(message, recipient)
 
-    async def nip44_decrypt(self, payload: str, public_key: str) -> str:
-        return self.nip44.decrypt(payload, public_key)
+    async def nip44_decrypt(
+        self,
+        payload: str,
+        public_key: str | None = None,
+        *,
+        for_pub_k: str | None = None,
+    ) -> str:
+        peer = public_key if public_key is not None else for_pub_k
+        if peer is None:
+            raise ValueError("NIP-44 peer public key is required")
+        return self.nip44.decrypt(payload, peer)

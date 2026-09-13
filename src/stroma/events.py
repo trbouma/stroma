@@ -7,12 +7,23 @@ import json
 import secrets
 import time
 from copy import deepcopy
+from datetime import datetime, timezone
 from typing import Any, Iterable, Iterator
 
 from coincurve import PublicKeyXOnly
 
 from .errors import EventError
 from .keys import Keys
+
+
+class EventTimestamp(int):
+    """Unix timestamp retaining Monstr's historical ``timestamp()`` surface."""
+
+    def timestamp(self) -> float:
+        return float(self)
+
+    def strftime(self, format: str) -> str:
+        return datetime.fromtimestamp(int(self), tz=timezone.utc).strftime(format)
 
 
 class EventTags:
@@ -94,7 +105,9 @@ class Event:
         self.content = content
         self.tags = tags if isinstance(tags, EventTags) else EventTags(tags)
         self.pub_key = pub_key
-        self.created_at = int(time.time()) if created_at is None else int(created_at)
+        self.created_at = EventTimestamp(
+            int(time.time()) if created_at is None else int(created_at)
+        )
 
     @staticmethod
     def load(event_data: str | dict[str, Any], validate: bool = False) -> "Event | None":
@@ -181,6 +194,14 @@ class Event:
 
     def copy(self) -> "Event":
         return Event.load(self.data())  # type: ignore[return-value]
+
+    def __lt__(self, other: "Event") -> bool:
+        if not isinstance(other, Event):
+            return NotImplemented
+        return (int(self.created_at), self._id or "") < (
+            int(other.created_at),
+            other._id or "",
+        )
 
     @staticmethod
     def is_event_id(value: str) -> bool:
