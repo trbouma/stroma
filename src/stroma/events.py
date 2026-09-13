@@ -102,6 +102,14 @@ class Event:
         self._id = id
         self._sig = sig
         self.kind = int(kind)
+        # NIP-01 requires event content to be a JSON string. Monstr-era
+        # callers sometimes used None to mean an empty deletion reason, so
+        # retain that narrow compatibility while refusing other invalid wire
+        # values before a relay has to reject them.
+        if content is None:
+            content = ""
+        elif not isinstance(content, str):
+            raise EventError("Event content must be a string")
         self.content = content
         self.tags = tags if isinstance(tags, EventTags) else EventTags(tags)
         self.pub_key = pub_key

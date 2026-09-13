@@ -1,4 +1,7 @@
+import pytest
+
 from stroma import Event, Keys
+from stroma.errors import EventError
 
 
 def test_key_round_trip() -> None:
@@ -18,6 +21,17 @@ def test_event_sign_and_validate() -> None:
 
     assert event.is_valid()
     assert Event.load(event.data(), validate=True) is not None
+
+
+def test_event_normalizes_legacy_none_content_to_empty_string() -> None:
+    event = Event(kind=Event.KIND_DELETE, content=None)  # type: ignore[arg-type]
+
+    assert event.content == ""
+
+
+def test_event_rejects_non_string_content() -> None:
+    with pytest.raises(EventError, match="content must be a string"):
+        Event(content={"invalid": "wire value"})  # type: ignore[arg-type]
 
 
 def test_event_tampering_fails_validation() -> None:
