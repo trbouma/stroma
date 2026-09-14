@@ -13,7 +13,7 @@ Its API is intentionally narrower than a general-purpose Nostr client library.
 | NIP-01 | Serialize, identify, sign, validate, and inspect events |
 | NIP-19 | Encode and decode keys, profiles, events, relays, and addresses |
 | NIP-44 | Authenticated version 2 encryption and extended-length payloads |
-| NIP-59 | Rumour, seal, and ephemeral gift-wrap construction and validation |
+| NIP-59 | Rumour, seal, and ephemeral gift-wrap construction and validation with zero timestamp jitter |
 | NIP-40 | Optional expiration metadata on gift wraps |
 | Relay operations | Publish acknowledgements, queries, EOSE, timeouts, and pooling |
 

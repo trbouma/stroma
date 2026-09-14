@@ -34,13 +34,28 @@ async def test_wrong_recipient_is_rejected() -> None:
 
 
 @pytest.mark.asyncio
-async def test_zero_jitter_uses_current_timestamp(monkeypatch) -> None:
+async def test_gift_wrap_uses_current_timestamp_without_jitter(monkeypatch) -> None:
     monkeypatch.setattr("stroma.nip59.time.time", lambda: 500)
-    wrapped, _ = await GiftWrap(BasicKeySigner(Keys()), jitter_seconds=0).wrap(
-        Event(content="x", created_at=10), Keys()
+    recipient = Keys()
+    wrapped, ephemeral = await GiftWrap(
+        BasicKeySigner(Keys()), jitter_seconds=0
+    ).wrap(
+        Event(content="x", created_at=10), recipient
     )
+    seal_json = await BasicKeySigner(recipient).nip44_decrypt(
+        wrapped.content,
+        ephemeral.public_key_hex(),
+    )
+    seal = Event.load(seal_json)
 
     assert wrapped.created_at == 500
+    assert seal is not None
+    assert seal.created_at == 500
+
+
+def test_nonzero_timestamp_jitter_is_rejected() -> None:
+    with pytest.raises(ValueError, match="timestamp jitter is disabled"):
+        GiftWrap(BasicKeySigner(Keys()), jitter_seconds=1)
 
 
 @pytest.mark.asyncio

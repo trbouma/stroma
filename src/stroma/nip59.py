@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import secrets
 import time
 
 from .errors import GiftWrapError
@@ -22,18 +21,16 @@ class GiftWrap:
         preserve_rumour_kind: bool = True,
         kind_gift_wrap: int | None = None,
     ) -> None:
-        if jitter_seconds < 0:
-            raise ValueError("jitter_seconds must not be negative")
+        if jitter_seconds != 0:
+            raise ValueError("NIP-59 timestamp jitter is disabled")
         self.signer = signer
-        self.jitter_seconds = jitter_seconds
         self.gift_wrap_kind = (
             gift_wrap_kind if kind_gift_wrap is None else int(kind_gift_wrap)
         )
         self.preserve_rumour_kind = preserve_rumour_kind
 
     def _created_at(self) -> int:
-        now = int(time.time())
-        return now - secrets.randbelow(self.jitter_seconds + 1) if self.jitter_seconds else now
+        return int(time.time())
 
     async def _make_rumour(self, event: Event) -> Event:
         return Event(

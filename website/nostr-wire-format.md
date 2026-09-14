@@ -34,6 +34,11 @@ NIP-44 provides authenticated encryption between keys. NIP-59 can place an
 encrypted event inside a separately signed seal and ephemeral outer envelope,
 reducing visible sender-recipient correlation.
 
+Stroma deliberately gives the seal and outer gift wrap the current timestamp
+without randomized backward jitter. This keeps relay ordering and Acorn's
+checkpoint processing aligned with the actual delivery time. The policy trades
+away the timing-obfuscation benefit that randomized timestamps can provide.
+
 ### Replaceable transport
 
 Events can be published to or queried from different compatible relays. A

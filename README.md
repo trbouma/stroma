@@ -18,7 +18,7 @@ records, application schemas, and business rules remain outside Stroma.
 - NIP-19 profile, event, relay, and address entities;
 - deterministic FIPS IPv6 address derivation from Nostr public keys;
 - NIP-44 version 2 encryption, including its extended length prefix;
-- NIP-59 gift wrapping with an explicit timestamp policy;
+- NIP-59 gift wrapping with a fixed zero-jitter timestamp policy;
 - NIP-40 expiration tags on gift wraps;
 - operation-scoped relay publishing, acknowledgement, and querying;
 - relay-pool quorum publishing and deduplicated querying.
