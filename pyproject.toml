@@ -10,6 +10,7 @@ packages = [{ include = "stroma", from = "src" }]
 [tool.poetry.dependencies]
 python = ">=3.11,<3.14"
 aiohttp = ">=3.10,<4"
+yarl = ">=1.9,<2"
 bech32 = ">=1.2,<2"
 coincurve = ">=20,<22"
 pycryptodome = ">=3.20,<4"

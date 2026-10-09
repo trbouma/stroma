@@ -16,11 +16,18 @@ from .nip19 import Entities, UnknownEntity
 from .nip44 import NIP44Encrypt, calc_padded_len, pad, unpad
 from .nip59 import GiftWrap
 from .relay import PublishResult, RelayClient, RelayPool
+from .blossom import BlossomError, BlossomOutcome, BlossomPool, BlossomRetrievalResult, BlossomStoreResult, storage_threshold
 from .signing import BasicKeySigner, Signer
 from .compat import Client, ClientPool, DeduplicateAcceptor, util_funcs
 
 __all__ = [
     "BasicKeySigner",
+    "BlossomError",
+    "BlossomOutcome",
+    "BlossomPool",
+    "BlossomRetrievalResult",
+    "BlossomStoreResult",
+    "storage_threshold",
     "Client",
     "ClientPool",
     "EncryptionError",

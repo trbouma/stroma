@@ -22,6 +22,7 @@ The governing rule is:
 - NIP-40 expiration metadata on envelopes;
 - filters, relay messages, publication acknowledgements, and EOSE handling;
 - bounded async connection cleanup;
+- Blossom byte retrieval, SHA-256 verification, upload authorization, and replication outcomes;
 - stable protocol-specific errors.
 
 ## Stroma does not own
@@ -29,7 +30,7 @@ The governing rule is:
 - Acorn configuration or wallet state;
 - Cashu proofs, mints, balances, or payments;
 - record schemas, control history, or OpenETR semantics;
-- Blossom objects or application attachment policies;
+- Blossom server implementation, retention guarantees, or application attachment policies;
 - NIP-05 domain trust;
 - relay persistence or a relay-server implementation;
 - user interfaces, sessions, databases, or service workers;

@@ -84,8 +84,9 @@ format is more general: signed events, typed payloads, tagged relationships,
 and replaceable relay infrastructure. Stroma exposes that smaller substrate.
 
 It does not implement feeds, follows, reactions, profiles, wallet state,
-Cashu, records, Blossom, OpenETR, or a relay server. Those capabilities can use
-Stroma without becoming part of Stroma.
+Cashu, record semantics, OpenETR rules, or a relay server. Its Blossom pool adds
+digest-verified byte transport, not storage-server operation or attachment policy.
+Those application capabilities can use Stroma without becoming part of Stroma.
 
 ## Part of the Mainstay product family
 

@@ -22,9 +22,65 @@ records, application schemas, and business rules remain outside Stroma.
 - NIP-40 expiration tags on gift wraps;
 - operation-scoped relay publishing, acknowledgement, and querying;
 - relay-pool quorum publishing and deduplicated querying.
+- Blossom digest-verified retrieval and multi-server storage confirmation.
 
 Stroma deliberately excludes social-client behavior, a relay server, Cashu,
-Blossom, OpenETR, application records, wallet state, and local persistence.
+OpenETR semantics, application records, wallet state, attachment/retention policy,
+and local persistence. Blossom support is a client transport, not a storage server.
+
+## Blossom Pool
+
+```python
+from stroma import BlossomPool, Keys
+
+pool = BlossomPool(["https://blossom.example.org", "https://backup.example.org"])
+stored = await pool.store(b"exact artifact bytes", signer=Keys())  # require="any"
+if stored.ok:
+    print(stored.digest, stored.confirmed_servers)
+artifact = await pool.retrieve(stored.digest)
+assert artifact.content == b"exact artifact bytes"
+```
+
+Production applications should pass their existing `Keys` or `Signer`, rather
+than generate a fresh key for each upload. `store` attempts all unique targets;
+`require` controls success, not the number of uploads attempted:
+
+| Requirement | Confirmations for N unique targets |
+| --- | --- |
+| `any` (default) | 1 |
+| `half` | `(N + 1) // 2` |
+| `majority` | `N // 2 + 1` |
+| `all` | N |
+
+Unavailable targets remain in the denominator. Partial storage returns
+a `BlossomStoreResult` whose `ok` property is false, with
+`confirmed`, `rejected`, or `unconfirmed` per-server outcomes; it does not roll
+back successful uploads. Confirmation requires a digest-verified GET, including
+when the upload response was lost. The pool never explicitly retries an upload.
+Confirmed availability is not a retention guarantee or consensus.
+
+Retrieval races configured servers and optional `hints=[...]`, returns the first
+SHA-256-verified copy, and cancels remaining work. `BlossomError.outcomes` gives
+failures if no copy is verified. The result includes bytes, digest, server, and
+declared media type; a media-type header is not proof that rendering is safe.
+
+Defaults: 10 seconds per HTTP request, 60 seconds per operation (including queue
+and signer waits), four concurrent workers, 25 MiB per blob, and 32 input server
+entries. Servers must be HTTPS origins, with no credentials, path, query, or
+fragment. DNS and literal destinations must be public. Redirects are not followed,
+environment proxies and cookies are disabled, and TLS verification stays enabled.
+`allow_private=True` and `allow_http=True` are explicit operator opt-ins for
+local test deployments; never expose those switches to untrusted callers.
+Applications must still decide which hints are permitted and apply egress controls.
+
+The initial surface uses [BUD-01 retrieval](https://github.com/hzrd149/blossom/blob/master/buds/01.md),
+[BUD-02 upload](https://github.com/hzrd149/blossom/blob/master/buds/02.md), and
+[BUD-11 authorization](https://github.com/hzrd149/blossom/blob/master/buds/11.md).
+Upload authorization is scoped to the digest and server domain. Authenticated
+retrieval, redirects/CDN discovery, payment, mirroring, listing, deletion, and
+retention management are not implemented. The pool does not create OpenETR
+anchor events or choose event tags; an application can use `confirmed_servers`
+when constructing its own location hints.
 
 ## Install for development
 
