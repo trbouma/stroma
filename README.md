@@ -63,10 +63,15 @@ Retrieval races configured servers and optional `hints=[...]`, returns the first
 SHA-256-verified copy, and cancels remaining work. `BlossomError.outcomes` gives
 failures if no copy is verified. The result includes bytes, digest, server, and
 declared media type; a media-type header is not proof that rendering is safe.
+Origins are normalized and deduplicated across configured servers and hints
+before applying `max_servers`. Hostname case, default ports, and a trailing slash
+do not create separate targets. The first occurrence determines list order;
+retrieval remains concurrent, not a sequence of fallback stages. Pass finite
+candidate lists; applications remain responsible for bounding untrusted inputs.
 
 Defaults: 10 seconds per HTTP request, 60 seconds per operation (including queue
-and signer waits), four concurrent workers, 25 MiB per blob, and 32 input server
-entries. Servers must be HTTPS origins, with no credentials, path, query, or
+and signer waits), four concurrent workers, 25 MiB per blob, and 32 unique server
+origins. Servers must be HTTPS origins, with no credentials, path, query, or
 fragment. DNS and literal destinations must be public. Redirects are not followed,
 environment proxies and cookies are disabled, and TLS verification stays enabled.
 `allow_private=True` and `allow_http=True` are explicit operator opt-ins for

@@ -132,11 +132,13 @@ class BlossomPool:
         if isinstance(values, str):
             values = [values]
         servers = []
-        for index, value in enumerate(values):
-            if index >= self.max_servers:
-                raise ValueError("Too many Blossom server entries")
+        seen = set()
+        for value in values:
             server = self._server(value)
-            if server not in servers:
+            if server not in seen:
+                if len(servers) >= self.max_servers:
+                    raise ValueError("Too many unique Blossom server origins")
+                seen.add(server)
                 servers.append(server)
         return tuple(servers)
 

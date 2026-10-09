@@ -32,9 +32,10 @@ def test_validation_and_deduplication():
 
 @asynccontextmanager
 async def server(mode="ok", content=None):
-    state = {"content": content, "uploads": 0, "tokens": []}
+    state = {"content": content, "uploads": 0, "tokens": [], "gets": 0}
 
     async def get(request):
+        state["gets"] += 1
         if mode == "slow":
             await asyncio.sleep(.3)
         if mode == "redirect":
@@ -81,6 +82,36 @@ def pool(servers, **options):
     return BlossomPool(servers, allow_http=True, allow_private=True, **options)
 
 
+def test_server_limit_counts_normalized_unique_origins():
+    duplicates = ["https://EXAMPLE.com/", "https://example.com:443"] * 40
+    assert BlossomPool(duplicates, max_servers=1).servers == ("https://example.com",)
+    assert BlossomPool(
+        [*duplicates, "https://backup.example.com", *duplicates], max_servers=2,
+    ).servers == ("https://example.com", "https://backup.example.com")
+    with pytest.raises(ValueError, match="Too many unique"):
+        BlossomPool([*duplicates, "https://backup.example.com"], max_servers=1)
+    # Reaching the unique limit must not skip validation of subsequent entries.
+    with pytest.raises(ValueError):
+        BlossomPool([*duplicates, "http://example.com"], max_servers=1)
+
+
+@pytest.mark.asyncio
+async def test_retrieve_deduplicates_configured_servers_and_hints_before_limit():
+    content = b"verified artifact"
+    digest = hashlib.sha256(content).hexdigest()
+    async with server(content=content) as (url, state):
+        result = await pool([url, url + "/"], max_servers=1).retrieve(
+            digest, hints=[url, url + "/"] * 40,
+        )
+        assert result.content == content
+        assert state["gets"] == 1
+        with pytest.raises(ValueError, match="Too many unique"):
+            await pool([url], max_servers=1).retrieve(
+                digest, hints=["http://127.0.0.1:1"],
+            )
+        assert state["gets"] == 1  # Reject an oversized union before network I/O.
+
+
 @pytest.mark.asyncio
 async def test_store_default_any_and_all_outcomes():
     async with server() as (good, good_state), server("reject") as (bad, bad_state):
@@ -116,7 +147,7 @@ async def test_retrieve_fallback_hints_and_wrong_digest():
     content = b"verified artifact"
     digest = hashlib.sha256(content).hexdigest()
     async with server("wrong") as (bad, _), server(content=content) as (good, _):
-        result = await pool([bad]).retrieve(digest, hints=[good])
+        result = await pool([bad], max_servers=2).retrieve(digest, hints=[good, bad, good])
         assert result.content == content and result.server == good
         assert result.media_type == "application/pdf"
         with pytest.raises(BlossomError) as failure:
