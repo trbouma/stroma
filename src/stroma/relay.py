@@ -6,7 +6,7 @@ import asyncio
 import json
 import secrets
 from dataclasses import dataclass
-from typing import Any, Iterable
+from typing import Any, Callable, Iterable
 
 import aiohttp
 
@@ -23,9 +23,18 @@ class PublishResult:
 
 
 class RelayClient:
-    def __init__(self, url: str, *, timeout: float = 10.0) -> None:
+    def __init__(self, url: str, *, timeout: float = 10.0,
+                 session_factory: Callable[..., aiohttp.ClientSession] = aiohttp.ClientSession,
+                 max_msg_size: int = 4 * 1024 * 1024) -> None:
+        """Use a fresh owned session per operation; callers may supply network policy.
+
+        The factory receives ``timeout`` and must return an async context manager.
+        This permits DNS/redirect restrictions without reimplementing Nostr frames.
+        """
         if not url.startswith(("ws://", "wss://")):
             raise ValueError("Relay URL must use ws:// or wss://")
+        self.session_factory = session_factory
+        self.max_msg_size = max_msg_size
         self.url = url
         self.timeout = timeout
 
@@ -33,14 +42,14 @@ class RelayClient:
         """Open and close a bounded WebSocket connection."""
 
         timeout = aiohttp.ClientTimeout(total=self.timeout)
-        async with aiohttp.ClientSession(timeout=timeout) as session:
-            async with session.ws_connect(self.url):
+        async with self.session_factory(timeout=timeout) as session:
+            async with session.ws_connect(self.url, max_msg_size=self.max_msg_size):
                 return True
 
     async def publish(self, event: Event) -> PublishResult:
         timeout = aiohttp.ClientTimeout(total=self.timeout)
-        async with aiohttp.ClientSession(timeout=timeout) as session:
-            async with session.ws_connect(self.url) as websocket:
+        async with self.session_factory(timeout=timeout) as session:
+            async with session.ws_connect(self.url, max_msg_size=self.max_msg_size) as websocket:
                 await websocket.send_json(["EVENT", event.data()])
                 while True:
                     message = await websocket.receive()
@@ -66,8 +75,8 @@ class RelayClient:
         subscription_id = secrets.token_hex(8)
         timeout = aiohttp.ClientTimeout(total=self.timeout)
         events: dict[str, Event] = {}
-        async with aiohttp.ClientSession(timeout=timeout) as session:
-            async with session.ws_connect(self.url) as websocket:
+        async with self.session_factory(timeout=timeout) as session:
+            async with session.ws_connect(self.url, max_msg_size=self.max_msg_size) as websocket:
                 await websocket.send_json(["REQ", subscription_id, *request_filters])
                 while True:
                     message = await websocket.receive()

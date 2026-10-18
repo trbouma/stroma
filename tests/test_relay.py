@@ -42,8 +42,17 @@ async def test_publish_acknowledgement_and_query_eose() -> None:
     try:
         event = Event(kind=1, content="relay test")
         event.sign(Keys())
-        result = await RelayClient(url).publish(event)
-        queried = await RelayClient(url).query({"ids": [event.id]})
+        import aiohttp
+        sessions = []
+        def session_factory(**kwargs):
+            session = aiohttp.ClientSession(trust_env=False, **kwargs)
+            sessions.append(session)
+            return session
+        client = RelayClient(url, session_factory=session_factory, max_msg_size=262144)
+        result = await client.publish(event)
+        queried = await client.query({"ids": [event.id]})
+        assert len(sessions) == 2
+        assert all(session.closed for session in sessions)
 
         assert result.accepted
         assert result.message == "stored"
