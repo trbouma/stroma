@@ -28,7 +28,14 @@ Stroma deliberately excludes social-client behavior, a relay server, Cashu,
 OpenETR semantics, application records, wallet state, attachment/retention policy,
 and local persistence. Blossom support is a client transport, not a storage server.
 
+## Proposed post quantum support
+
+For the proposed optional ML-DSA and ML-KEM component, see the
+[post-quantum design note](website/post-quantum-design.md). It defines the threat
+model, key lifecycle and envelope design gates; PQ support is not yet implemented.
+
 ## Blossom Pool
+
 
 ```python
 from stroma import BlossomPool, Keys

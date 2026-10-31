@@ -40,6 +40,7 @@ nav:
       - Nostr as a Wire Format: nostr-wire-format.md
       - Protocol Surface: protocol-surface.md
       - Stroma and Acorn: acorn-boundary.md
+      - Optional Post Quantum Design: post-quantum-design.md
   - Use Stroma:
       - Getting Started: getting-started.md
       - Project Status: project-status.md

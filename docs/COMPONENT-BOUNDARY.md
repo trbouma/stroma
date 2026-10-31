@@ -34,7 +34,12 @@ The governing rule is:
 - NIP-05 domain trust;
 - relay persistence or a relay-server implementation;
 - user interfaces, sessions, databases, or service workers;
-- post-quantum policy or algorithms.
+- post-quantum trust policy, private-key persistence or recovery.
+
+Post-quantum algorithms are not currently implemented. The proposed optional
+[PQ component](../website/post-quantum-design.md) would add provider-backed
+cryptographic mechanics and opaque envelopes, not application key-management
+policy or a change to standard Nostr events.
 
 ## Dependency direction
 
