@@ -21,15 +21,15 @@ def require(condition, message):
         raise RuntimeError(message)
 
 
-def check(library, fixture):
+def check(library, fixture, *, wrapper_version=VERSION, native_version=VERSION):
     # Resolve/check before importing oqs, which otherwise attempts installation.
     path = Path(library).resolve(strict=True)
-    require(importlib.metadata.version("liboqs-python") == VERSION,
-            "Expected pinned test wrapper 0.14.0")
+    require(importlib.metadata.version("liboqs-python") == wrapper_version,
+            f"Expected pinned test wrapper {wrapper_version}")
     native = ctypes.CDLL(str(path))
     native.OQS_version.restype = ctypes.c_char_p
-    require(native.OQS_version().decode() == VERSION,
-            "Expected native liboqs 0.14.0; refusing wrapper import")
+    require(native.OQS_version().decode() == native_version,
+            f"Expected native liboqs {native_version}; refusing wrapper import")
 
     def audit(event, args):
         if event in {"subprocess.Popen", "os.system", "os.posix_spawn"} or event.startswith("socket."):
@@ -80,8 +80,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("fixture")
     parser.add_argument("--liboqs", required=True)
+    parser.add_argument("--maintained", action="store_true",
+                        help="Test wrapper 0.16.0.2 with native 0.16.0 instead of historical pair")
     args = parser.parse_args()
     try:
-        check(args.liboqs, args.fixture)
+        versions = dict(wrapper_version="0.16.0.2", native_version="0.16.0") if args.maintained else {}
+        check(args.liboqs, args.fixture, **versions)
     except (OSError, RuntimeError, importlib.metadata.PackageNotFoundError) as exc:
         parser.exit(1, f"Backend probe failed: {exc}\n")

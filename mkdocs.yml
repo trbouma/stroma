@@ -43,6 +43,7 @@ nav:
       - Optional Post Quantum Design: post-quantum-design.md
   - Use Stroma:
       - Getting Started: getting-started.md
+      - Optional Post Quantum Backend: post-quantum-backend.md
       - Project Status: project-status.md
   - Security: security.md
 

@@ -28,11 +28,13 @@ Stroma deliberately excludes social-client behavior, a relay server, Cashu,
 OpenETR semantics, application records, wallet state, attachment/retention policy,
 and local persistence. Blossom support is a client transport, not a storage server.
 
-## Proposed post quantum support
+## Optional post quantum primitives
 
-For the proposed optional ML-DSA and ML-KEM component, see the
-[post-quantum design note](website/post-quantum-design.md). It defines the threat
-model, key lifecycle and envelope design gates; PQ support is not yet implemented.
+The experimental `stroma.pq` adapter supports ML-DSA-44 and ML-KEM-768.
+Default installs do not include PQ dependencies. Opt in with `stroma-nostr[pq]`
+and provision native liboqs separately; nothing is downloaded or compiled at runtime.
+See [installation and usage](website/post-quantum-backend.md) and the
+[envelope design note](website/post-quantum-design.md). Envelopes remain unimplemented.
 
 ## Blossom Pool
 

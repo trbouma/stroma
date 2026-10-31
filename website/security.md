@@ -27,9 +27,10 @@ it.
 ## Current limitations
 
 The [optional post-quantum design](post-quantum-design.md) proposes ML-DSA and
-ML-KEM payload protection without changing standard Nostr events. It is a design
-proposal, not an implemented safeguard; key recovery and identity trust remain
-explicit application responsibilities.
+ML-KEM payload protection without changing standard Nostr events. An experimental
+[primitive backend](post-quantum-backend.md) is available, but the envelope is not
+implemented. Existing encryption gains no automatic PQ protection. Key recovery
+and identity trust remain explicit application responsibilities.
 
 Stroma is unaudited pre-release software. Its current relay interface is
 deliberately small and has not yet completed Acorn's live relay-suitability

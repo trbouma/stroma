@@ -36,10 +36,9 @@ The governing rule is:
 - user interfaces, sessions, databases, or service workers;
 - post-quantum trust policy, private-key persistence or recovery.
 
-Post-quantum algorithms are not currently implemented. The proposed optional
-[PQ component](../website/post-quantum-design.md) would add provider-backed
-cryptographic mechanics and opaque envelopes, not application key-management
-policy or a change to standard Nostr events.
+The optional [PQ backend](../website/post-quantum-backend.md) provides experimental
+ML-DSA-44 and ML-KEM-768 primitives. Opaque envelopes remain a design proposal.
+Neither layer owns application key-management policy or changes standard Nostr events.
 
 ## Dependency direction
 

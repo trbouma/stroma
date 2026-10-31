@@ -697,6 +697,21 @@ MarkupSafe = ">=2.0"
 i18n = ["Babel (>=2.7)"]
 
 [[package]]
+name = "liboqs-python"
+version = "0.16.0.2"
+description = "Python bindings for liboqs, providing post-quantum public key cryptography algorithms"
+optional = true
+python-versions = ">=3.10"
+files = [
+    {file = "liboqs_python-0.16.0.2-py3-none-any.whl", hash = "sha256:8e80da56cd409600a8366c5cf5099acd08eea4c031e4af225b63ba0c53433d76"},
+    {file = "liboqs_python-0.16.0.2.tar.gz", hash = "sha256:7ab4dee5f84536417a8d0ff0c37238ef440ce22cd8f62d3236370320894c92e7"},
+]
+
+[package.extras]
+dev = ["isort (==5.13.2)", "nose2 (==0.15.1)", "pre-commit (==4.1.0)", "pyasn1 (==0.6.4)", "pyasn1-alt-modules (==0.4.6)", "ruff (==0.9.4)"]
+lint = ["mypy (==1.14.1)", "types-pytz (==2024.2.0.20241221)"]
+
+[[package]]
 name = "markdown"
 version = "3.10.3"
 description = "Python implementation of John Gruber's Markdown."
@@ -1711,7 +1726,10 @@ idna = ">=2.0"
 multidict = ">=4.0"
 propcache = ">=0.2.1"
 
+[extras]
+pq = ["liboqs-python"]
+
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<3.14"
-content-hash = "7b40d2ff21a6990908c0dcd29f3e31ec9820e0fac4e7e69e9013afeef5f9d499"
+content-hash = "d131f79f67df5efb4ba7df00beb7f5139720145d02b6d839fb1641f3df371ddc"

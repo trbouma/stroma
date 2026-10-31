@@ -103,10 +103,20 @@ and installs a process-local audit hook rejecting network/process execution. Tho
 test-only patches are **not** a production loader or a general native-code sandbox.
 The historical installer uses shell execution; do not deploy it unmodified.
 
-Before shipping an optional provider, choose maintained wrapper/native release pins,
-repeat these tests, and provide an explicit no-install loader (upstream support or a
-reviewed adapter). Missing, unloadable, mismatched or unsupported native libraries
-must fail closed without downloading, compiling or selecting another algorithm.
+The experimental `stroma.pq` adapter now pins wrapper 0.16.0.2/native 0.16.0.
+The maintained pair passed the same probe on 2026-10-31 using:
+
+```console
+python tests/pq_vectors/check_wrapper.py tests/pq_vectors/stroma-pq-v1.json \
+  --maintained --liboqs /absolute/path/to/liboqs.dylib
+```
+
+The native test build used upstream commit
+`5a1a854b0dc9f2141bdc771c555ee60c37950183` (tag 0.16.0), shared-library build,
+`OQS_MINIMAL_BUILD=SIG_ml_dsa_44;KEM_ml_kem_768`, and `OQS_USE_OPENSSL=OFF`.
+It was built explicitly in a disposable directory, not installed automatically.
+The adapter uses narrow C bindings rather than importing the wrapper's loader;
+see `website/post-quantum-backend.md` for installation and its review requirements.
 Successful wrapper tests do not independently validate HPKE or the envelope parser.
 
 ### Cross-provider fixture results

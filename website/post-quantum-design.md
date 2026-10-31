@@ -1,8 +1,8 @@
 # Optional Post Quantum Cryptography Design
 
-Status: design proposal, 2026-10-31. No PQ API, installation extra or envelope
-format described here is implemented. This is the first design step, not a
-production security claim or a finalized interoperable protocol.
+Status: experimental primitives implemented, 2026-10-31. The optional
+[backend and installation extra](post-quantum-backend.md) are available; the
+envelope format below remains a proposal, not an implemented or finalized protocol.
 
 Stroma should offer optional ML-DSA signatures and ML-KEM key establishment for
 opaque application payloads while preserving its existing Nostr wire behavior.
@@ -343,8 +343,9 @@ signature/KEM round trips with wrapper commit
 `d552e3a55985e5a2396545d744be0a01321ddbc3` and native liboqs 0.14.0.
 This historical pin is test evidence, not production approval. The wrapper attempts
 automatic native installation when loading fails; the probe bypasses that path and
-blocks network/process execution. Production requires maintained release pins and
-a reviewed fail-closed loader with no runtime download/build behavior. Ordinary
+blocks network/process execution. The experimental adapter now uses maintained
+release pins and a narrow direct C binding instead of importing the installer.
+Independent review remains required before production use. Ordinary
 Stroma imports must remain independent of the optional backend. See the harness
 README for reproduction and the limits of the test-only loader injection.
 

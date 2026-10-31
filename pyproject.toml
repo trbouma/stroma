@@ -14,6 +14,10 @@ yarl = ">=1.9,<2"
 bech32 = ">=1.2,<2"
 coincurve = ">=20,<22"
 pycryptodome = ">=3.20,<4"
+liboqs-python = { version = "==0.16.0.2", optional = true }
+
+[tool.poetry.extras]
+pq = ["liboqs-python"]
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=8,<10"
