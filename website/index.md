@@ -55,6 +55,18 @@ timeouts, deduplication, and connection cleanup visible rather than implicit.
 
 </div>
 
+## Optional post quantum support
+
+Applications can opt into `stroma-nostr[pq]` for experimental ML-DSA-44 signatures
+and ML-KEM-768 key establishment. Default installations remain free of PQ
+dependencies. Native liboqs is explicitly provisioned by the operator or built
+into the application's Docker image, never installed at runtime by Stroma.
+
+These are cryptographic primitives, not a completed encrypted-envelope protocol.
+Existing Nostr signatures, encryption and relay-query validation remain unchanged.
+
+[Use the optional PQ backend](post-quantum-backend.md){ .md-button }
+
 ## Structure beneath the surface
 
 Stromatolites preserve layer upon layer of structure. Stroma takes inspiration

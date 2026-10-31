@@ -17,6 +17,12 @@ Its API is intentionally narrower than a general-purpose Nostr client library.
 | NIP-40 | Optional expiration metadata on gift wraps |
 | Relay operations | Publish acknowledgements, queries, EOSE, timeouts, and pooling |
 | Blossom pool | Digest-verified retrieval and multi-server upload confirmation |
+| Optional PQ backend | Experimental ML-DSA-44 signing/verification and ML-KEM-768 encapsulation/decapsulation through `stroma.pq.PQBackend` |
+
+PQ support requires the `pq` extra and an explicitly installed native library.
+It does not extend NIP-01, replace NIP-44, or make the standard query client accept
+nonstandard PQ event signatures. Applications such as pqrelay own that separate
+wire-format extension. See [optional PQ setup](post-quantum-backend.md).
 
 ## Explicitly excluded
 

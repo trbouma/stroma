@@ -81,16 +81,16 @@ FIPS algorithm use is not equivalent to FIPS validation of a cryptographic modul
 
 ## Component boundary and optional provider
 
-Proposed modules, not importable APIs:
+The implemented module is `stroma.pq`, exposing `PQBackend`, `PQKeyPair`,
+`PQBackendUnavailable` and `PQOperationError`. It provides fixed-suite primitive
+operations; the nested signatures/kem/envelopes module layout originally proposed
+here is not an importable API. Envelope encoding and binding remain future work.
 
-- `stroma.pq.signatures`: typed ML-DSA keys, sign and verify operations.
-- `stroma.pq.kem`: typed ML-KEM keys, encapsulation and decapsulation.
-- `stroma.pq.envelopes`: bounded versioned encoding and cryptographic binding.
-- `stroma.pq.backends`: explicit provider availability and algorithm support.
-
-An optional distribution extra such as `stroma-nostr[pq]` may install a provider.
-Ordinary Stroma imports must not load it, download code or invoke native builds.
-Missing PQ support must raise an explicit capability error when requested.
+The `stroma-nostr[pq]` extra installs the pinned optional Python dependency.
+Native liboqs is provisioned separately, including explicit Docker build-time
+compilation where appropriate. Ordinary imports do not load liboqs, download code
+or invoke native builds. Missing or incompatible support raises
+`PQBackendUnavailable` when the backend is constructed.
 Malformed data, unsupported suites and invalid authentication must be distinguishable
 for local diagnostics without exposing secret-dependent detail to remote callers.
 

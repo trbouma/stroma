@@ -16,6 +16,10 @@ the active Nostr implementation inside Safebox Acorn.
 - relay publish acknowledgements and EOSE queries;
 - relay-pool quorum and deduplication behavior;
 - stable protocol error types.
+- optional `pq` packaging and the experimental `stroma.pq.PQBackend` adapter;
+- ML-DSA-44 key generation, signing and verification with explicit context;
+- ML-KEM-768 key generation, encapsulation and decapsulation;
+- explicit native-library loading with version checks and no runtime installer.
 
 ## Verified
 
@@ -27,6 +31,22 @@ the active Nostr implementation inside Safebox Acorn.
 - NIP-59 round trips and wrong-recipient rejection;
 - local WebSocket relay publishing and querying;
 - package metadata, source distribution, and wheel builds.
+- installation with and without PQ dependencies;
+- PQ fixtures, tamper/context rejection and native primitive round trips;
+- application interoperability: pqrelay published and retrieved classical and
+  ML-DSA-44 events between a development machine and a Docker relay on Beelink
+  (user-reported successful end-to-end test).
+
+## PQ scope and remaining work
+
+The optional backend is implemented; the proposed signed/encrypted envelope,
+full HPKE interoperability, application key recovery and identity trust are not
+provided by it. Native qualification so far covers local macOS testing and the
+reported Linux Docker deployment, not every supported Python/OS combination.
+Independent cryptographic review remains required before production use.
+
+See [installation and API](post-quantum-backend.md) and the
+[envelope design and remaining gates](post-quantum-design.md).
 
 ## Next
 
