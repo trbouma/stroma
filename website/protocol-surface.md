@@ -9,6 +9,7 @@ Its API is intentionally narrower than a general-purpose Nostr client library.
 
 | Surface | Responsibility |
 | --- | --- |
+| [Curve primitives](curve-primitives.md) | SEC1 point parsing, serialization, addition, and scalar multiplication |
 | Keys | Generate and parse secp256k1 private and x-only public keys |
 | NIP-01 | Serialize, identify, sign, validate, and inspect events |
 | NIP-19 | Encode and decode keys, profiles, events, relays, and addresses |

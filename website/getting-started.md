@@ -82,6 +82,13 @@ plaintext = NIP44Encrypt(bob).decrypt(payload, alice.public_key_hex())
 assert plaintext == "private payload"
 ```
 
+## Use curve primitives
+
+Applications that need full secp256k1 point arithmetic can use `CurvePoint`
+and `CURVE_ORDER` from the default installation. See the
+[curve API and examples](curve-primitives.md) for scalar validation, SEC1
+encodings, and the boundary between Stroma and Clear.
+
 ## Build the documentation
 
 ```console

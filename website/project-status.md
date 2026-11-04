@@ -8,6 +8,7 @@ the active Nostr implementation inside Safebox Acorn.
 ## Implemented
 
 - key generation and NIP-19 key conversion;
+- [secp256k1 curve primitives](curve-primitives.md) for protocol-neutral point arithmetic;
 - canonical NIP-01 events and BIP-340 signatures;
 - NIP-19 TLV entities;
 - NIP-44 version 2 and extended-length prefixes;
@@ -28,6 +29,8 @@ the active Nostr implementation inside Safebox Acorn.
 - two-way NIP-44 compatibility with Acorn's current dependency below its
   legacy length limit;
 - signed-event validation and tamper rejection;
+- curve generator vectors, invalid scalars/points, and infinity rejection;
+- Clear migration regression coverage for unchanged keyset identity and signature output;
 - NIP-59 round trips and wrong-recipient rejection;
 - local WebSocket relay publishing and querying;
 - package metadata, source distribution, and wheel builds.
