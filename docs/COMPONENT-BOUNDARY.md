@@ -77,3 +77,13 @@ encodings are accepted; x-only Nostr keys are a separate API.
 Clear can use these primitives without importing coincurve directly. Cashu
 hash-to-curve, blinding, keyset derivation, proof verification, and treasury
 policy remain in Clear. This does not add Cashu protocol semantics to Stroma.
+
+
+Additive key tweaking is also protocol-neutral: `Keys.tweak_add()` returns a new
+keypair, and `CurvePoint.tweak_add()` returns its publicly derivable point.
+The digest is caller-supplied, exactly 32 bytes and below the curve order;
+zero tweaks are allowed, zero derived secrets/infinity are rejected.
+Explicit x-only mode normalizes the parent to even Y, preserving output parity.
+`CurvePoint.from_xonly()` lifts a 32-byte public key to even Y. Applications own
+hash domain separation and key-derivation policy; these are not Cashu or Taproot
+protocol implementations. See the [API examples](../website/curve-primitives.md).

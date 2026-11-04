@@ -5,6 +5,7 @@ from __future__ import annotations
 from bech32 import bech32_decode, bech32_encode, convertbits
 from coincurve import PrivateKey, PublicKey
 
+from .curve import CURVE_ORDER, _tweak
 from .errors import KeyError
 
 
@@ -162,3 +163,21 @@ class Keys:
             return point.multiply(self._private.secret).format(compressed=True)[1:]
         except Exception as exc:
             raise KeyError("Unable to calculate shared key") from exc
+
+    def tweak_add(self, digest: bytes, *, x_only: bool = False) -> "Keys":
+        """Derive a new keypair by adding a 32-byte digest to this secret.
+
+        In x-only mode, normalize the parent to even Y before addition so
+        public derivation from its x-only key agrees. The returned secret
+        corresponds to the actual resulting point, without output normalization.
+        Invalid tweaks or a zero result raise ValueError; a public-only Keys
+        instance raises Stroma KeyError. The original keypair is unchanged.
+        """
+        if self._private is None:
+            raise KeyError("A private key is required for private-key tweaking")
+        tweak = _tweak(digest)
+        private = self._private
+        if x_only and private.public_key.format()[0] == 3:
+            private = private.multiply((CURVE_ORDER - 1).to_bytes(32, "big"))
+        derived = private.add(tweak, update=False)
+        return type(self)(priv_k=derived.secret.hex())

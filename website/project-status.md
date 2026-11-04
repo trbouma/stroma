@@ -9,6 +9,7 @@ the active Nostr implementation inside Safebox Acorn.
 
 - key generation and NIP-19 key conversion;
 - [secp256k1 curve primitives](curve-primitives.md) for protocol-neutral point arithmetic;
+- additive private/public key tweaks with explicit x-only parent normalization;
 - canonical NIP-01 events and BIP-340 signatures;
 - NIP-19 TLV entities;
 - NIP-44 version 2 and extended-length prefixes;

@@ -21,6 +21,14 @@ def _scalar(value: bytes) -> bytes:
     return value
 
 
+def _tweak(value: bytes) -> bytes:
+    if not isinstance(value, bytes) or len(value) != 32:
+        raise ValueError("tweak must be exactly 32 bytes")
+    if int.from_bytes(value, "big") >= CURVE_ORDER:
+        raise ValueError("tweak must be less than the curve order")
+    return value
+
+
 class CurvePoint:
     """An immutable-by-API secp256k1 point, with no protocol semantics."""
 
@@ -51,3 +59,23 @@ class CurvePoint:
     def format(self, compressed: bool = True) -> bytes:
         """Serialize as SEC1 bytes (compressed by default)."""
         return self._point.format(compressed=compressed)
+
+    @classmethod
+    def from_xonly(cls, encoded: bytes) -> CurvePoint:
+        """Lift a 32-byte x-only key to its even-Y SEC1 point."""
+        if not isinstance(encoded, bytes) or len(encoded) != 32:
+            raise ValueError("x-only key must be exactly 32 bytes")
+        return cls(b"\x02" + encoded)
+
+    def tweak_add(self, digest: bytes, *, x_only: bool = False) -> CurvePoint:
+        """Return P + tG, optionally normalizing P to even Y first.
+
+        digest is an already computed 32-byte digest, interpreted big-endian.
+        Zero is allowed; out-of-range tweaks and infinity are rejected.
+        The result retains its actual parity, even in x-only mode.
+        """
+        tweak = _tweak(digest)
+        point = self._point
+        if x_only:
+            point = PublicKey(b"\x02" + self.format()[1:])
+        return type(self)(point.add(tweak, update=False).format())
