@@ -162,3 +162,6 @@ vector for existing keyset identity and signature output.
 
 See the [protocol surface](protocol-surface.md) and
 [security commitments](security.md) for the wider library boundary.
+
+For application patterns, domain-key examples, and compromise boundaries, see
+[Using Key Tweaks](key-tweaking-guide.md).
