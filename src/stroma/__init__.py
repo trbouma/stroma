@@ -1,5 +1,6 @@
 """Stroma: a minimal Nostr wire-format interface for Safebox Acorn."""
 
+from .curve import CURVE_ORDER, CurvePoint
 from .errors import (
     EncryptionError,
     EventError,
@@ -21,6 +22,8 @@ from .signing import BasicKeySigner, Signer
 from .compat import Client, ClientPool, DeduplicateAcceptor, util_funcs
 
 __all__ = [
+    "CURVE_ORDER",
+    "CurvePoint",
     "BasicKeySigner",
     "BlossomError",
     "BlossomOutcome",

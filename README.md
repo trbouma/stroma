@@ -14,6 +14,7 @@ records, application schemas, and business rules remain outside Stroma.
 ## Initial scope
 
 - secp256k1 keypairs and NIP-19 key encoding;
+- protocol-neutral SEC1 point arithmetic through `CurvePoint` and `CURVE_ORDER`;
 - NIP-01 event serialization, BIP-340 signing, and validation;
 - NIP-19 profile, event, relay, and address entities;
 - deterministic FIPS IPv6 address derivation from Nostr public keys;

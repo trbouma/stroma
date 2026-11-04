@@ -13,6 +13,7 @@ The governing rule is:
 
 ## Stroma owns
 
+- protocol-neutral secp256k1 point arithmetic through `CurvePoint`;
 - Nostr key representation required by wire protocols;
 - canonical NIP-01 event serialization;
 - BIP-340 event signing and verification;
@@ -63,3 +64,16 @@ does not make it a drop-in replacement for the complete `monstr` package.
 
 Compatibility is evaluated against behavior used by Acorn, not against every
 historical `monstr` feature.
+
+## Shared curve primitives
+
+`stroma.CurvePoint` exposes SEC1 parsing/serialization, generator multiplication,
+point multiplication, and addition through coincurve. `stroma.CURVE_ORDER`
+provides the scalar order. Scalars must be exactly 32 bytes and in `[1, n-1]`;
+invalid points and results at infinity raise `ValueError`. Operations return new
+points and retain no private scalar. Both compressed and uncompressed SEC1
+encodings are accepted; x-only Nostr keys are a separate API.
+
+Clear can use these primitives without importing coincurve directly. Cashu
+hash-to-curve, blinding, keyset derivation, proof verification, and treasury
+policy remain in Clear. This does not add Cashu protocol semantics to Stroma.
